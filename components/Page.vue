@@ -124,6 +124,7 @@
 				limit: 50,
 				search: "",
 				fixedTitle: "",
+				stop: false,
 			};
 		},
 		async fetch() {
@@ -148,13 +149,16 @@
 				}
 
 				this.articles = [...this.articles, ...result];
+			} else {
+				this.stop = true;
 			}
 		},
 		methods: {
 			lazyLoadArticles(isVisible) {
 				if (
 					isVisible &&
-					this.articles.length <= this.pageNum * this.limit
+					this.articles.length <= this.pageNum * this.limit &&
+					!this.stop
 				) {
 					this.pageNum++;
 					this.$fetch();
