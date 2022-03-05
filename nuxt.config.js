@@ -5,7 +5,7 @@ export default {
 			{ charset: 'UTF-8' },
 			{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
 			{ 'http-equiv': 'X-UA-Compatible', content: 'IE=edge' },
-			{ property: 'og:type', content: 'article' },
+			{ property: 'og:type', content: 'website' },
 			{ property: 'og:site_name', content: 'War News' },
 			{ name: "twitter:image", property: "og:image", content: "https://warnews.info/warnews.jpg" },
 			{ property: "og:image:secure_url", content: "https://warnews.info/warnews.jpg" },
