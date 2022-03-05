@@ -1,0 +1,137 @@
+:root {
+	--blue: #005ea0;
+	--white: #fff
+}
+
+body {
+	box-sizing: border-box;
+	overflow-x: hidden;
+	font: 400 16px Tahoma;
+	line-height: 1.5;
+	background-color: #f0f0f0;
+	color: rgba(0 0 0 / 87%)
+}
+
+h1,
+a {
+	color: var(--blue)
+}
+
+header {
+	max-width: 468px;
+	padding: 3rem 2rem;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center
+}
+
+h1 {
+	text-transform: uppercase;
+	font-size: 2rem;
+	margin: 0 auto 15px;
+	line-height: 1.2
+}
+
+#description {
+	font-size: 1.2rem
+}
+
+body,
+ul,
+figure {
+	margin: 0
+}
+
+main,
+figure,
+span,
+img,
+#news li,
+li a:not(.inline) {
+	display: block
+}
+
+#news {
+	display: grid;
+	gap: 1.5rem;
+	padding: 0 1.5rem;
+	width: calc(100vw - 3rem);
+	max-width: 800px;
+	margin: 0 auto
+}
+
+a {
+	cursor: pointer;
+}
+
+a:not(:hover) {
+	text-decoration: none
+}
+
+img {
+	width: 100%;
+	height: auto
+}
+
+.description {
+	margin-top: 2px
+}
+
+.service {
+	margin-top: 2px;
+	color: rgba(0 0 0 / 60%)
+}
+
+main {
+	margin-bottom: 2rem
+}
+
+#changeLanguage {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 48px;
+	height: 48px;
+	display: grid;
+	font-size: 1.4rem;
+	text-transform: uppercase;
+	text-align: center;
+	text-decoration: none
+}
+
+#changeLanguage span {
+	align-self: center
+}
+
+h1,
+strong,
+#changeLanguage,
+#changeLanguage span {
+	font-weight: 700
+}
+
+#search {
+	margin: 20px auto 0;
+	position: relative;
+	width: 200px
+}
+
+#search input {
+	padding: 5px 40px 5px 10px;
+	width: 100%;
+	height: 36px
+}
+
+#search button {
+	width: 36px;
+	height: 38px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: 0;
+	background-color: transparent
+}
+
+#search svg {
+	fill:rgba(0 0 0 / 60%);
+}
