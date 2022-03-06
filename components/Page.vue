@@ -136,12 +136,12 @@
 		props: {
 			title: {
 				type: String,
-				default: "War News",
+				default: "Russia-Ukraine War Updates",
 			},
 			desc: {
 				type: String,
 				default:
-					"Comprehensive news coverage in English about the war and its effects. The list is updated daily.",
+					"Comprehensive news list about the Russia-Ukraine war and its impact on the world. New articles are added daily.",
 			},
 			lang: {
 				type: String,
