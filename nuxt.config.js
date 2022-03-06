@@ -18,11 +18,13 @@ export default {
 			{ name: 'apple-mobile-web-app-status-bar-style', content: '#005ea0' },
 			{ name: 'apple-mobile-web-app-capable', content: 'yes' },
 			{ name: 'msapplication-TileColor', content: '#005ea0' },
+			{ name: 'msapplication-config', content: '/browserconfig.xml' },
 			{ name: 'msapplication-TileImage', content: '/icons/ms-icon-144x144.png' },
 		],
 		link: [
 			{ rel: 'dns-prefetch', href: 'https:/api.warnews.info/' },
 			{ rel: 'icon', type: 'image/x-icon', href: 'https://warnews.info/favicon.ico' },
+			{ rel: 'manifest', href: '/manifest.json' },
 			{ rel: 'icon', type: 'image/png', href: '/icons/favicon-96x96.png', sizes: '96x96' },
 			{ rel: 'icon', type: 'image/png', href: '/icons/android-icon-192x192.png', sizes: '192x192' },
 			{ rel: 'apple-touch-icon', type: 'image/png', href: '/icons/apple-icon-57x57.png', sizes: '57x57' },
