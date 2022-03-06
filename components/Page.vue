@@ -34,12 +34,17 @@
 				<input
 					type="search"
 					v-model="search"
-					minlength="4"
 					maxlength="50"
-					:placeholder="searchPlaceholder"
+					pattern=".{4,50}"
+					:placeholder="lang == 'fi' ? 'Hakusana' : 'Keyword'"
+					:title="
+						lang == 'fi'
+							? 'Hakusanat 5-10 merkkiä'
+							: 'Keywords 5-10 characters'
+					"
 					required
 				/>
-				<button :aria-label="searchButton">
+				<button type="submit" :title="lang == 'fi' ? 'Etsi' : 'Search'">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="24"
@@ -55,45 +60,65 @@
 			</form>
 		</header>
 
-		<ul
-			v-if="Array.isArray(articles) && articles[0]"
+		<div
 			id="news"
-			:aria-label="aria"
+			:aria-busy="ariaBusy"
+			:aria-label="
+				lang == 'fi'
+					? 'Uusimmat sotiin liittyvät uutislinkit'
+					: 'Current war-related news links'
+			"
+			role="feed"
 		>
-			<li
-				v-for="(article, i) of articles"
-				:key="article.id"
-				v-observe-visibility="
-					i === articles.length - 2 ? lazyLoadArticles : false
-				"
-			>
-				<a :href="article.url" :hreflang="lang" rel="nofollow">
-					<strong>
-						{{ article.title }}
-					</strong>
-				</a>
+			<template v-if="Array.isArray(articles) && articles[0]">
+				<article
+					v-for="(article, i) of articles"
+					:key="article.id"
+					v-observe-visibility="
+						i === articles.length - 2 ? lazyLoadArticles : false
+					"
+					:aria-posinset="i + 1"
+					:aria-setsize="articles.length"
+					:aria-labelledby="`article-title-${article.id}`"
+					:aria-describedby="`article-description-${article.id} article-author-${article.id}`"
+				>
+					<a
+						:href="article.url"
+						:hreflang="lang"
+						rel="external bookmark noopener"
+						:aria-labelledby="`article-title-${article.id}`"
+					>
+						<strong :id="`article-title-${article.id}`">
+							{{ article.title }}
+						</strong>
+					</a>
 
-				<span class="description">
-					{{ article.summary }}
-				</span>
+					<span
+						:id="`article-description-${article.id}`"
+						class="description"
+					>
+						{{ article.summary }}
+					</span>
 
-				<span class="service" data-nosnippet>
-					<small>
-						<nuxt-link
-							v-if="!service"
-							class="inline"
-							:to="{
-								query: { service: article.service },
-							}"
-							:key="article.service"
-						>
-							{{ article.serviceName }}
-						</nuxt-link>
-						{{ article.created }}
-					</small>
-				</span>
-			</li>
-		</ul>
+					<span class="service" data-nosnippet>
+						<small>
+							<nuxt-link
+								:id="`article-author-${article.id}`"
+								class="inline"
+								:to="{
+									query: { service: article.service },
+								}"
+								:key="article.service"
+								rel="author"
+							>
+								{{ article.serviceName }}
+							</nuxt-link>
+							{{ article.created }}
+						</small>
+					</span>
+				</article>
+			</template>
+		</div>
 	</div>
 </template>
 
@@ -113,18 +138,6 @@
 				type: String,
 				default: "en",
 			},
-			aria: {
-				type: String,
-				default: "Current war-related news",
-			},
-			searchPlaceholder: {
-				type: String,
-				default: "Keywords",
-			},
-			searchButton: {
-				type: String,
-				default: "Search",
-			},
 			hid: {
 				type: Number,
 				default: 1,
@@ -142,6 +155,7 @@
 				search: "",
 				fixedTitle: "",
 				stop: false,
+				ariaBusy: "false",
 				baseUrl: this.lang == "fi" ? "/fi" : "/",
 				changeLanguage: {
 					abbr: this.lang == "fi" ? "en" : "fi",
@@ -151,6 +165,7 @@
 			};
 		},
 		async fetch() {
+			this.ariaBusy = "true";
 			let select = `limit=${this.limit}&pageNumber=${this.pageNum}&lang=${this.lang}`;
 
 			if (this.$route.query.search) {
@@ -173,6 +188,8 @@
 			} else {
 				this.stop = true;
 			}
+
+			this.ariaBusy = "false";
 		},
 		methods: {
 			lazyLoadArticles(isVisible) {
@@ -225,12 +242,18 @@
 					{
 						name: "twitter:description",
 						property: "og:description",
-						content: this.description,
+						content: this.desc,
 					},
 					{
 						hid: `page-${this.hid}`,
 						name: "description",
 						content: this.desc,
+					},
+				],
+				link: [
+					{
+						rel: "canonical",
+						href: `https://warnews.info${this.baseUrl}`,
 					},
 				],
 			};

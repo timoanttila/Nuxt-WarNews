@@ -18,7 +18,7 @@ export default {
 			{ name: 'apple-mobile-web-app-status-bar-style', content: '#005ea0' },
 			{ name: 'apple-mobile-web-app-capable', content: 'yes' },
 			{ name: 'msapplication-TileColor', content: '#005ea0' },
-			{ name: 'msapplication-TileImage', content: 'icons/ms-icon-144x144.png' },
+			{ name: 'msapplication-TileImage', content: '/icons/ms-icon-144x144.png' },
 		],
 		link: [
 			{ rel: 'icon', type: 'image/x-icon', href: 'https://warnews.info/favicon.ico' },
@@ -32,8 +32,16 @@ export default {
 			{ rel: 'icon', type: 'image/png', href: '/icons/apple-icon-120x120.png', sizes: '120x120' },
 			{ rel: 'icon', type: 'image/png', href: '/icons/apple-icon-144x144.png', sizes: '144x144' },
 			{ rel: 'icon', type: 'image/png', href: '/icons/apple-icon-152x152.png', sizes: '152x152' },
-			{ rel: 'icon', type: '/icons/apple-icon-180x180.png', sizes: '180x180' }
-		]
+			{ rel: 'icon', type: 'image/png', href: '/icons/apple-icon-180x180.png', sizes: '180x180' }
+		],
+		script: [
+			{
+				type: 'application/ld+json',
+				json: {
+					"@context": "https://schema.org/", "@type": "WebSite", "url": "https://warnews.info/", "image": "https://warnews.info/warnews.jpg", "potentialAction": { "@type": "SearchAction", "target": { "@type": "EntryPoint", "urlTemplate": "https://warnews.info/?search={search_term_string}" }, "query-input": "required name=search_term_string" }
+				}
+			},
+		],
 	},
 	css: [
 		'@/assets/global.css',
