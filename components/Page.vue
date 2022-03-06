@@ -83,24 +83,25 @@
 					:aria-describedby="`article-description-${article.id} article-author-${article.id}`"
 				>
 					<a
+						:id="`article-title-${article.id}`"
 						:href="article.url"
 						:hreflang="lang"
 						rel="external bookmark noopener"
-						:aria-labelledby="`article-title-${article.id}`"
+						:aria-label="article.title"
 					>
-						<strong :id="`article-title-${article.id}`">
+						<strong>
 							{{ article.title }}
 						</strong>
 					</a>
 
-					<span
+					<div
 						:id="`article-description-${article.id}`"
 						class="description"
 					>
 						{{ article.summary }}
-					</span>
+					</div>
 
-					<span class="service" data-nosnippet>
+					<div class="service" data-nosnippet>
 						<small>
 							<nuxt-link
 								:id="`article-author-${article.id}`"
@@ -113,9 +114,16 @@
 							>
 								{{ article.serviceName }}
 							</nuxt-link>
-							{{ article.created }}
+
+							<time
+								pubdate
+								:datetime="article.created.datetime"
+								:title="article.created.title"
+							>
+								{{ article.created.view }}
+							</time>
 						</small>
-					</span>
+					</div>
 				</article>
 			</template>
 		</div>
