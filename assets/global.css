@@ -28,7 +28,7 @@ header {
 
 h1 {
 	text-transform: uppercase;
-	font-size: 2rem;
+	font-size: clamp(2rem, 2.6rem, 8vw);
 	margin: 0 auto 15px;
 	line-height: 1.2
 }
