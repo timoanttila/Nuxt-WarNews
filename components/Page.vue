@@ -198,13 +198,14 @@
 			reset() {
 				this.service = "";
 				this.search = "";
-				this.fixedTitle = "";
 				this.$nuxt.$options.router.push(this.$nuxt.$route.path);
 			},
 		},
 		watch: {
 			$route: function (value) {
 				this.articles = [];
+				this.pageNum = 1;
+				this.fixedTitle = "";
 				this.$fetch();
 			},
 		},

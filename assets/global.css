@@ -105,12 +105,12 @@ main {
 
 #changeLanguage {
 	top: 0;
-	right: 0
+	right: 10px
 }
 
 #resetSearch {
 	top: 0;
-	right: 50px
+	right: 58px
 }
 
 #resetSearch,
