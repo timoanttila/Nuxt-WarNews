@@ -164,10 +164,10 @@
 				fixedTitle: "",
 				stop: false,
 				ariaBusy: "false",
-				baseUrl: this.lang == "fi" ? "/fi" : "/",
+				baseUrl: this.lang == "fi" ? "/fi/" : "/",
 				changeLanguage: {
 					abbr: this.lang == "fi" ? "en" : "fi",
-					url: this.lang == "fi" ? "/" : "/fi",
+					url: this.lang == "fi" ? "/" : "/fi/",
 				},
 				service: "",
 			};
