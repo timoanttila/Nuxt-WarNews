@@ -1,5 +1,23 @@
 <template>
 	<div id="page">
+		<nuxt-link
+			id="changeLanguage"
+			class="flyingLink"
+			:to="changeLanguage.url"
+			:hreflang="changeLanguage.abbr"
+		>
+			<span class="bold">{{ changeLanguage.abbr }}</span>
+		</nuxt-link>
+
+		<button
+			v-if="service || search"
+			id="resetSearch"
+			class="flyingLink"
+			@click="reset"
+		>
+			<span class="bold">X</span>
+		</button>
+
 		<header role="banner">
 			<h1>{{ fixedTitle ? fixedTitle : title }}</h1>
 			<div v-if="desc && !service" id="description">
@@ -64,7 +82,10 @@
 						<nuxt-link
 							v-if="!service"
 							class="inline"
-							:to="`/${article.service}`"
+							:to="{
+								query: { service: article.service },
+							}"
+							:key="article.service"
 						>
 							{{ article.serviceName }}
 						</nuxt-link>
@@ -96,10 +117,6 @@
 				type: String,
 				default: "Current war-related news",
 			},
-			service: {
-				type: Number,
-				default: 0,
-			},
 			searchPlaceholder: {
 				type: String,
 				default: "Keywords",
@@ -125,24 +142,28 @@
 				search: "",
 				fixedTitle: "",
 				stop: false,
+				baseUrl: this.lang == "fi" ? "/fi" : "/",
+				changeLanguage: {
+					abbr: this.lang == "fi" ? "en" : "fi",
+					url: this.lang == "fi" ? "/" : "/fi",
+				},
+				service: "",
 			};
 		},
 		async fetch() {
-			let query = `limit=${this.limit}&pageNumber=${this.pageNum}&`;
+			let select = `limit=${this.limit}&pageNumber=${this.pageNum}&lang=${this.lang}`;
 
 			if (this.$route.query.search) {
-				this.search = this.fixString(this.$route.query.search);
+				this.search = await this.fixString(this.$route.query.search);
+				select += `&search=${this.search}`;
 			}
 
-			if (this.search) {
-				query += `search=${this.fixString(this.search)}`;
-			} else if (this.service && !isNaN(this.service)) {
-				query += `service=${this.service}`;
-			} else {
-				query += `lang=${this.lang}`;
+			if (this.$route.query.service) {
+				this.service = parseInt(this.$route.query.service);
+				select += `&service=${this.service}`;
 			}
 
-			const result = await this.$post(query);
+			const result = await this.$post(select);
 			if (Array.isArray(result) && result[0]) {
 				if (this.service) {
 					this.fixedTitle = result[0].serviceName;
@@ -165,11 +186,26 @@
 				}
 			},
 			findResults() {
-				this.articles = [];
-				this.$fetch();
+				this.$nuxt.$options.router.push(
+					`${this.$nuxt.$route.path}?search=${this.fixString(
+						this.search
+					)}`
+				);
 			},
 			fixString(item) {
 				return item.replace(/[^a-zA-Z0-9äÄåÅöÖ_., -]/g, "");
+			},
+			reset() {
+				this.service = "";
+				this.search = "";
+				this.fixedTitle = "";
+				this.$nuxt.$options.router.push(this.$nuxt.$route.path);
+			},
+		},
+		watch: {
+			$route: function (value) {
+				this.articles = [];
+				this.$fetch();
 			},
 		},
 		head() {

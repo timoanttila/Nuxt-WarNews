@@ -32,7 +32,7 @@ export default {
 			{ rel: 'icon', type: 'image/png', href: '/icons/apple-icon-120x120.png', sizes: '120x120' },
 			{ rel: 'icon', type: 'image/png', href: '/icons/apple-icon-144x144.png', sizes: '144x144' },
 			{ rel: 'icon', type: 'image/png', href: '/icons/apple-icon-152x152.png', sizes: '152x152' },
-			{ rel: 'icon', type: '/icons/apple-icon-180x180.png', sizes: '180x180' },
+			{ rel: 'icon', type: '/icons/apple-icon-180x180.png', sizes: '180x180' }
 		]
 	},
 	css: [

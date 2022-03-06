@@ -13,7 +13,8 @@ body {
 }
 
 h1,
-a {
+a,
+button.flyingLink {
 	color: var(--blue)
 }
 
@@ -60,7 +61,8 @@ li a:not(.inline) {
 	margin: 0 auto
 }
 
-a {
+a,
+button {
 	cursor: pointer;
 }
 
@@ -86,10 +88,8 @@ main {
 	margin-bottom: 2rem
 }
 
-#changeLanguage {
+.flyingLink {
 	position: absolute;
-	top: 0;
-	right: 0;
 	width: 48px;
 	height: 48px;
 	display: grid;
@@ -99,14 +99,29 @@ main {
 	text-decoration: none
 }
 
-#changeLanguage span {
+.flyingLink span {
 	align-self: center
+}
+
+#changeLanguage {
+	top: 0;
+	right: 0
+}
+
+#resetSearch {
+	top: 0;
+	right: 50px
+}
+
+#resetSearch,
+#search button {
+	border: 0;
+	background-color: transparent
 }
 
 h1,
 strong,
-#changeLanguage,
-#changeLanguage span {
+.bold {
 	font-weight: 700
 }
 
@@ -127,9 +142,7 @@ strong,
 	height: 38px;
 	position: absolute;
 	top: 0;
-	right: 0;
-	border: 0;
-	background-color: transparent
+	right: 0
 }
 
 #search svg {
