@@ -21,6 +21,7 @@ export default {
 			{ name: 'msapplication-TileImage', content: '/icons/ms-icon-144x144.png' },
 		],
 		link: [
+			{ rel: 'dns-prefetch', href: 'https:/api.warnews.info/' },
 			{ rel: 'icon', type: 'image/x-icon', href: 'https://warnews.info/favicon.ico' },
 			{ rel: 'icon', type: 'image/png', href: '/icons/favicon-96x96.png', sizes: '96x96' },
 			{ rel: 'icon', type: 'image/png', href: '/icons/android-icon-192x192.png', sizes: '192x192' },
