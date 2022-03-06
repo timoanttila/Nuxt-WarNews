@@ -81,6 +81,7 @@
 					:aria-setsize="articles.length"
 					:aria-labelledby="`article-title-${article.id}`"
 					:aria-describedby="`article-description-${article.id} article-author-${article.id}`"
+					tabindex="0"
 				>
 					<a
 						:id="`article-title-${article.id}`"
