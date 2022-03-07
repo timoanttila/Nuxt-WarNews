@@ -75,7 +75,10 @@
 					v-for="(article, i) of articles"
 					:key="article.id"
 					v-observe-visibility="
-						i === articles.length - 2 ? lazyLoadArticles : false
+						i === articles.length - 2 &&
+						articles.length == limit * pageNum
+							? lazyLoadArticles
+							: false
 					"
 					:aria-posinset="i + 1"
 					:aria-setsize="articles.length"
@@ -86,7 +89,7 @@
 					<a
 						:id="`article-title-${article.id}`"
 						:href="article.url"
-						:hreflang="lang"
+						:hreflang="article.languageName"
 						rel="external bookmark noopener"
 						:aria-label="article.title"
 					>
@@ -167,24 +170,30 @@
 				ariaBusy: "false",
 				baseUrl: this.lang == "fi" ? "/fi/" : "/",
 				changeLanguage: {
-					abbr: this.lang == "fi" ? "en" : "fi",
-					url: this.lang == "fi" ? "/" : "/fi/",
+					abbr: this.lang == "fi" || this.hid == 3 ? "en" : "fi",
+					url: this.lang == "fi" || this.hid == 3 ? "/" : "/fi/",
 				},
 				service: "",
 			};
 		},
 		async fetch() {
 			this.ariaBusy = "true";
-			let select = `limit=${this.limit}&pageNumber=${this.pageNum}&lang=${this.lang}`;
+			let select = `limit=${this.limit}&pageNumber=${this.pageNum}`;
 
-			if (this.$route.query.search) {
-				this.search = await this.fixString(this.$route.query.search);
-				select += `&search=${this.search}`;
-			}
+			if (this.hid == 3) {
+				select += "&photos=1";
+			} else {
+				select += `&lang=${this.lang}`;
 
-			if (this.$route.query.service) {
-				this.service = parseInt(this.$route.query.service);
-				select += `&service=${this.service}`;
+				if (this.$route.query.search) {
+					this.search = await this.fixString(this.$route.query.search);
+					select += `&search=${this.search}`;
+				}
+
+				if (this.$route.query.service) {
+					this.service = parseInt(this.$route.query.service);
+					select += `&service=${this.service}`;
+				}
 			}
 
 			const result = await this.$post(select);

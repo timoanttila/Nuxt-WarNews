@@ -58,12 +58,14 @@ li a:not(.inline) {
 }
 
 #news {
-	display: grid;
-	gap: 1.5rem;
 	padding: 0 1.5rem;
 	width: calc(100vw - 3rem);
 	max-width: 800px;
 	margin: 0 auto
+}
+
+article {
+	margin-bottom: 1.5rem
 }
 
 a,
