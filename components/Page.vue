@@ -30,7 +30,7 @@
 				</a>
 			</div>
 
-			<div id="pageControls" class="mx-auto grid">
+			<div v-if="!service" id="pageControls" class="mx-auto grid">
 				<div class="pageLinkContent">
 					<nuxt-link
 						v-if="pageLinks.hasPrev"
@@ -40,6 +40,7 @@
 						:title="
 							lang == 'fi' ? 'Edellinen sivu' : 'Previous page'
 						"
+						rel="prev"
 					>
 						<svg
 							class="mx-auto self-center"
@@ -57,12 +58,7 @@
 					</nuxt-link>
 				</div>
 
-				<form
-					v-if="!service"
-					@submit.prevent="findResults"
-					id="search"
-					class="mx-auto"
-				>
+				<form @submit.prevent="findResults" id="search" class="mx-auto">
 					<input
 						class="h-48"
 						type="search"
@@ -104,6 +100,7 @@
 						class="pageLinks grid no-underline w-48 h-48"
 						:to="{ path: baseUrl, query: { page: pageNum + 1 } }"
 						:title="lang == 'fi' ? 'Seuraava sivu' : 'Next page'"
+						rel="next"
 					>
 						<svg
 							class="self-center mx-auto"
@@ -119,6 +116,13 @@
 						</svg>
 					</nuxt-link>
 				</div>
+			</div>
+
+			<div v-if="pageLinks.totalCount" id="articlesTotal">
+				<small>
+					{{ pageLinks.totalCount }}
+					{{ lang == "fi" ? "artikkelia" : "articles" }}
+				</small>
 			</div>
 		</header>
 
@@ -231,6 +235,7 @@
 				stop: false,
 				ariaBusy: "false",
 				baseUrl: this.lang == "fi" ? "/fi/" : "/",
+				canoncial: "",
 				changeLanguage: {
 					abbr: this.lang == "fi" || this.hid == 3 ? "en" : "fi",
 					url: this.lang == "fi" || this.hid == 3 ? "/" : "/fi/",
@@ -242,33 +247,7 @@
 		async fetch() {
 			this.ariaBusy = "true";
 
-			if (this.$route.query.page) {
-				this.pageNum = parseInt(this.$route.query.page);
-			}
-
-			if (this.$route.query.size) {
-				this.limit = parseInt(this.$route.query.size);
-			}
-
-			let select = `limit=${this.limit}&pageNumber=${this.pageNum}`;
-
-			if (this.hid == 3) {
-				select += "&photos=1";
-			} else {
-				select += `&lang=${this.lang}`;
-
-				if (this.$route.query.search) {
-					this.search = await this.fixString(this.$route.query.search);
-					select += `&search=${this.search}`;
-				}
-
-				if (this.$route.query.service) {
-					this.service = parseInt(this.$route.query.service);
-					select += `&service=${this.service}`;
-				}
-			}
-
-			const result = await this.$post(select);
+			const result = await this.$post(await this.fixQueries());
 			if (Array.isArray(result.articles)) {
 				if (this.service) {
 					this.fixedTitle = result.articles[0].serviceName;
@@ -279,6 +258,7 @@
 				this.pageLinks = {
 					hasNext: result.nextPage ? 1 : 0,
 					hasPrev: result.previousPage ? 1 : 0,
+					totalCount: result.totalCount,
 				};
 			} else {
 				this.stop = true;
@@ -311,6 +291,50 @@
 				this.service = "";
 				this.search = "";
 				this.$nuxt.$options.router.push(this.$nuxt.$route.path);
+			},
+			async fixQueries() {
+				let query = "";
+
+				if (this.$route.query.page) {
+					this.pageNum = parseInt(this.$route.query.page);
+
+					if (this.pageNum > 1) {
+						query += !query ? "?" : "&";
+						query += `pageNum=${this.pageNum}`;
+					}
+				}
+
+				if (this.$route.query.size) {
+					this.limit = parseInt(this.$route.query.size);
+				}
+
+				let select = `limit=${this.limit}&pageNumber=${this.pageNum}`;
+
+				if (this.hid == 3) {
+					select += "&photos=1";
+				} else {
+					select += `&lang=${this.lang}`;
+
+					if (this.$route.query.search) {
+						this.search = await this.fixString(
+							this.$route.query.search
+						);
+						select += `&search=${this.search}`;
+					}
+
+					if (this.$route.query.service) {
+						this.service = parseInt(this.$route.query.service);
+						select += `&service=${this.service}`;
+
+						if (this.service) {
+							query += !query ? "?" : "&";
+							query += `service=${this.service}`;
+						}
+					}
+				}
+
+				this.canoncial = `${this.baseUrl}${query}`;
+				return select;
 			},
 		},
 		watch: {
@@ -348,7 +372,7 @@
 				link: [
 					{
 						rel: "canonical",
-						href: `https://warnews.info${this.baseUrl}`,
+						href: `https://warnews.info${this.canoncial}`,
 					},
 				],
 			};
