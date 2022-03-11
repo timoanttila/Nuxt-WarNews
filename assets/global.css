@@ -18,11 +18,14 @@ button.flyingLink {
 	color: var(--blue)
 }
 
+.mx-auto {
+	margin-left: auto;
+	margin-right: auto;
+}
+
 header {
 	max-width: 468px;
 	padding: 3rem 2rem;
-	margin-left: auto;
-	margin-right: auto;
 	text-align: center
 }
 
@@ -50,10 +53,7 @@ figure {
 
 main,
 figure,
-span,
-img,
-#news li,
-li a:not(.inline) {
+span {
 	display: block
 }
 
@@ -95,19 +95,31 @@ main {
 	margin-bottom: 2rem
 }
 
-.flyingLink {
-	position: absolute;
-	width: 48px;
-	height: 48px;
-	display: grid;
-	font-size: 1.4rem;
-	text-transform: uppercase;
-	text-align: center;
+.grid {
+	display: grid
+}
+
+.self-center {
+	align-self: center
+}
+
+.no-underline {
 	text-decoration: none
 }
 
-.flyingLink span {
-	align-self: center
+.w-48 {
+	width: 48px
+}
+
+.h-48 {
+	height: 48px
+}
+
+.flyingLink {
+	position: absolute;
+	font-size: 1.4rem;
+	text-transform: uppercase;
+	text-align: center
 }
 
 #changeLanguage {
@@ -126,6 +138,29 @@ main {
 	background-color: transparent
 }
 
+#pageControls {
+	margin-top: 1rem
+}
+
+@media screen and (min-width: 345px) {
+	#pageControls {
+		grid-template-columns: 48px 1fr 48px;
+		gap: 10px;
+		margin-top: 1rem;
+		width: 296px
+	}
+}
+
+@media screen and (max-width: 345px) {
+	.pageLinkContent {
+		display: none
+	}
+}
+
+.pageLinks svg {
+	fill:rgba(0 0 0 / 60%)
+}
+
 h1,
 strong,
 .bold {
@@ -133,20 +168,16 @@ strong,
 }
 
 #search {
-	margin: 20px auto 0;
 	position: relative;
 	width: 200px
 }
 
 #search input {
-	padding: 5px 40px 5px 10px;
-	width: 100%;
-	height: 36px
+	padding: 5px 48px 5px 10px;
+	width: 100%
 }
 
 #search button {
-	width: 36px;
-	height: 38px;
 	position: absolute;
 	top: 0;
 	right: 0

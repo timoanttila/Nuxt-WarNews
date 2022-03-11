@@ -2,23 +2,23 @@
 	<div id="page">
 		<nuxt-link
 			id="changeLanguage"
-			class="flyingLink"
+			class="flyingLink grid no-underline w-48 h-48"
 			:to="changeLanguage.url"
 			:hreflang="changeLanguage.abbr"
 		>
-			<span class="bold">{{ changeLanguage.abbr }}</span>
+			<span class="bold self-center">{{ changeLanguage.abbr }}</span>
 		</nuxt-link>
 
 		<button
 			v-if="service || search"
 			id="resetSearch"
-			class="flyingLink"
+			class="flyingLink grid no-underline w-48 h-48"
 			@click="reset"
 		>
-			<span class="bold">X</span>
+			<span class="bold self-center">X</span>
 		</button>
 
-		<header role="banner">
+		<header class="mx-auto" role="banner">
 			<h1>{{ fixedTitle ? fixedTitle : title }}</h1>
 			<div v-if="desc && !service" id="description">
 				{{ desc }}
@@ -30,34 +30,96 @@
 				</a>
 			</div>
 
-			<form v-if="!service" @submit.prevent="findResults" id="search">
-				<input
-					type="search"
-					v-model="search"
-					maxlength="50"
-					pattern=".{4,50}"
-					:placeholder="lang == 'fi' ? 'Hakusana' : 'Keyword'"
-					:title="
-						lang == 'fi'
-							? 'Hakusanat 5-10 merkkiä'
-							: 'Keywords 5-10 characters'
-					"
-					required
-				/>
-				<button type="submit" :title="lang == 'fi' ? 'Etsi' : 'Search'">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="24"
-						height="24"
-						viewBox="0 0 24 24"
+			<div id="pageControls" class="mx-auto grid">
+				<div class="pageLinkContent">
+					<nuxt-link
+						v-if="pageLinks.hasPrev"
+						id="pageLinkLeft"
+						class="pageLinks grid no-underline w-48 h-48"
+						:to="{ path: baseUrl, query: { page: pageNum - 1 } }"
+						:title="
+							lang == 'fi' ? 'Edellinen sivu' : 'Previous page'
+						"
 					>
-						<title>Search Icon</title>
-						<path
-							d="M21.172 24l-7.387-7.387c-1.388.874-3.024 1.387-4.785 1.387-4.971 0-9-4.029-9-9s4.029-9 9-9 9 4.029 9 9c0 1.761-.514 3.398-1.387 4.785l7.387 7.387-2.828 2.828zm-12.172-8c3.859 0 7-3.14 7-7s-3.141-7-7-7-7 3.14-7 7 3.141 7 7 7z"
-						/>
-					</svg>
-				</button>
-			</form>
+						<svg
+							class="mx-auto self-center"
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+						>
+							<title>Arrow left</title>
+							<path
+								d="M16.67 0l2.83 2.829-9.339 9.175 9.339
+						9.167-2.83 2.829-12.17-11.996z"
+							/>
+						</svg>
+					</nuxt-link>
+				</div>
+
+				<form
+					v-if="!service"
+					@submit.prevent="findResults"
+					id="search"
+					class="mx-auto"
+				>
+					<input
+						class="h-48"
+						type="search"
+						v-model="search"
+						maxlength="50"
+						pattern=".{4,50}"
+						:placeholder="lang == 'fi' ? 'Hakusana' : 'Keyword'"
+						:title="
+							lang == 'fi'
+								? 'Hakusanat 5-10 merkkiä'
+								: 'Keywords 5-10 characters'
+						"
+						required
+					/>
+					<button
+						class="w-48 h-48"
+						type="submit"
+						:title="lang == 'fi' ? 'Etsi' : 'Search'"
+					>
+						<svg
+							class="mx-auto self-center"
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+						>
+							<title>Search Icon</title>
+							<path
+								d="M21.172 24l-7.387-7.387c-1.388.874-3.024 1.387-4.785 1.387-4.971 0-9-4.029-9-9s4.029-9 9-9 9 4.029 9 9c0 1.761-.514 3.398-1.387 4.785l7.387 7.387-2.828 2.828zm-12.172-8c3.859 0 7-3.14 7-7s-3.141-7-7-7-7 3.14-7 7 3.141 7 7 7z"
+							/>
+						</svg>
+					</button>
+				</form>
+
+				<div class="pageLinkContent">
+					<nuxt-link
+						v-if="pageLinks.hasNext"
+						id="pageLinkRight"
+						class="pageLinks grid no-underline w-48 h-48"
+						:to="{ path: baseUrl, query: { page: pageNum + 1 } }"
+						:title="lang == 'fi' ? 'Seuraava sivu' : 'Next page'"
+					>
+						<svg
+							class="self-center mx-auto"
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+						>
+							<title>Arrow right</title>
+							<path
+								d="M7.33 24l-2.83-2.829 9.339-9.175-9.339-9.167 2.83-2.829 12.17 11.996z"
+							/>
+						</svg>
+					</nuxt-link>
+				</div>
+			</div>
 		</header>
 
 		<div
@@ -174,10 +236,20 @@
 					url: this.lang == "fi" || this.hid == 3 ? "/" : "/fi/",
 				},
 				service: "",
+				pageLinks: {},
 			};
 		},
 		async fetch() {
 			this.ariaBusy = "true";
+
+			if (this.$route.query.page) {
+				this.pageNum = parseInt(this.$route.query.page);
+			}
+
+			if (this.$route.query.size) {
+				this.limit = parseInt(this.$route.query.size);
+			}
+
 			let select = `limit=${this.limit}&pageNumber=${this.pageNum}`;
 
 			if (this.hid == 3) {
@@ -197,12 +269,17 @@
 			}
 
 			const result = await this.$post(select);
-			if (Array.isArray(result) && result[0]) {
+			if (Array.isArray(result.articles)) {
 				if (this.service) {
-					this.fixedTitle = result[0].serviceName;
+					this.fixedTitle = result.articles[0].serviceName;
 				}
 
-				this.articles = [...this.articles, ...result];
+				this.articles = [...this.articles, ...result.articles];
+
+				this.pageLinks = {
+					hasNext: result.nextPage ? 1 : 0,
+					hasPrev: result.previousPage ? 1 : 0,
+				};
 			} else {
 				this.stop = true;
 			}
