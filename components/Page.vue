@@ -118,10 +118,11 @@
 				</div>
 			</div>
 
-			<div v-if="pageLinks.totalCount" id="articlesTotal">
+			<div v-if="pageLinks && pageLinks.totalCount" id="articlesTotal">
 				<small>
 					{{ pageLinks.totalCount }}
-					{{ lang == "fi" ? "artikkelia" : "articles" }}
+					{{ lang == "fi" ? "artikkelia" : "articles" }} -
+					{{ pageNum }} / {{ pageLinks.totalPages }}
 				</small>
 			</div>
 		</header>
@@ -232,7 +233,6 @@
 				limit: 50,
 				search: "",
 				fixedTitle: "",
-				stop: false,
 				ariaBusy: "false",
 				baseUrl: this.lang == "fi" ? "/fi/" : "/",
 				canoncial: "",
@@ -259,9 +259,8 @@
 					hasNext: result.nextPage ? 1 : 0,
 					hasPrev: result.previousPage ? 1 : 0,
 					totalCount: result.totalCount,
+					totalPages: result.totalPages,
 				};
-			} else {
-				this.stop = true;
 			}
 
 			this.ariaBusy = "false";
@@ -270,8 +269,8 @@
 			lazyLoadArticles(isVisible) {
 				if (
 					isVisible &&
-					this.articles.length <= this.pageNum * this.limit &&
-					!this.stop
+					(!this.pageLinks.totalCount ||
+						this.pageLinks.totalCount > this.articles.length)
 				) {
 					this.pageNum++;
 					this.$fetch();
