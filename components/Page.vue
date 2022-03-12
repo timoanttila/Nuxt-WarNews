@@ -33,10 +33,13 @@
 			<div v-if="!service" id="pageControls" class="mx-auto grid">
 				<div class="pageLinkContent">
 					<nuxt-link
-						v-if="pageLinks.hasPrev"
+						v-if="pageLinks.previousPage"
 						id="pageLinkLeft"
 						class="pageLinks grid no-underline w-48 h-48"
-						:to="{ path: baseUrl, query: { page: pageNum - 1 } }"
+						:to="{
+							path: baseUrl,
+							query: { page: pageNum - 1 },
+						}"
 						:title="
 							lang == 'fi' ? 'Edellinen sivu' : 'Previous page'
 						"
@@ -95,10 +98,13 @@
 
 				<div class="pageLinkContent">
 					<nuxt-link
-						v-if="pageLinks.hasNext"
+						v-if="pageLinks.nextPage"
 						id="pageLinkRight"
 						class="pageLinks grid no-underline w-48 h-48"
-						:to="{ path: baseUrl, query: { page: pageNum + 1 } }"
+						:to="{
+							path: baseUrl,
+							query: { page: pageNum + 1 },
+						}"
 						:title="lang == 'fi' ? 'Seuraava sivu' : 'Next page'"
 						rel="next"
 					>
@@ -121,8 +127,10 @@
 			<div v-if="pageLinks && pageLinks.totalCount" id="articlesTotal">
 				<small>
 					{{ pageLinks.totalCount }}
-					{{ lang == "fi" ? "artikkelia" : "articles" }} -
-					{{ pageNum }} / {{ pageLinks.totalPages }}
+					{{ lang == "fi" ? "artikkelia" : "articles" }}
+					<template v-if="!service">
+						- {{ pageNum }} / {{ pageLinks.totalPages }}
+					</template>
 				</small>
 			</div>
 		</header>
@@ -142,25 +150,24 @@
 					v-for="(article, i) of articles"
 					:key="article.id"
 					v-observe-visibility="
-						i === articles.length - 2 &&
-						articles.length == limit * pageNum
+						i === articles.length - 2 && pageLinks.nextPage
 							? lazyLoadArticles
 							: false
 					"
 					:aria-posinset="i + 1"
 					:aria-setsize="articles.length"
 					:aria-labelledby="`article-title-${article.id}`"
-					:aria-describedby="`article-description-${article.id} article-author-${article.id}`"
+					:aria-describedby="`article-description-${article.id} article-publisher-${article.id}`"
 					tabindex="0"
 				>
 					<a
-						:id="`article-title-${article.id}`"
+						:id="`article-link-${article.id}`"
 						:href="article.url"
 						:hreflang="article.languageName"
 						rel="external bookmark noopener"
-						:aria-label="article.title"
+						:aria-labelledby="`article-title-${article.id}`"
 					>
-						<strong>
+						<strong :id="`article-title-${article.id}`">
 							{{ article.title }}
 						</strong>
 					</a>
@@ -175,13 +182,13 @@
 					<div class="service" data-nosnippet>
 						<small>
 							<nuxt-link
-								:id="`article-author-${article.id}`"
+								:id="`article-publisher-${article.id}`"
 								class="inline"
 								:to="{
 									query: { service: article.service },
 								}"
 								:key="article.service"
-								rel="author"
+								rel="publisher"
 							>
 								{{ article.serviceName }}
 							</nuxt-link>
@@ -230,6 +237,7 @@
 			return {
 				articles: [],
 				pageNum: 1,
+				pageNumScroll: 1,
 				limit: 50,
 				search: "",
 				fixedTitle: "",
@@ -255,24 +263,15 @@
 
 				this.articles = [...this.articles, ...result.articles];
 
-				this.pageLinks = {
-					hasNext: result.nextPage ? 1 : 0,
-					hasPrev: result.previousPage ? 1 : 0,
-					totalCount: result.totalCount,
-					totalPages: result.totalPages,
-				};
+				this.pageLinks = result.info;
 			}
 
 			this.ariaBusy = "false";
 		},
 		methods: {
 			lazyLoadArticles(isVisible) {
-				if (
-					isVisible &&
-					(!this.pageLinks.totalCount ||
-						this.pageLinks.totalCount > this.articles.length)
-				) {
-					this.pageNum++;
+				if (isVisible && this.pageLinks.nextPage) {
+					this.pageNumScroll++;
 					this.$fetch();
 				}
 			},
@@ -289,25 +288,21 @@
 			reset() {
 				this.service = "";
 				this.search = "";
+				this.pageNum = 1;
+				this.pageNumScroll = 1;
 				this.$nuxt.$options.router.push(this.$nuxt.$route.path);
 			},
 			async fixQueries() {
 				let query = "";
 
-				if (this.$route.query.page) {
-					this.pageNum = parseInt(this.$route.query.page);
-
-					if (this.pageNum > 1) {
-						query += !query ? "?" : "&";
-						query += `pageNum=${this.pageNum}`;
-					}
-				}
+				query += !query ? "?" : "&";
+				query += `pageNum=${this.pageNumScroll}`;
 
 				if (this.$route.query.size) {
 					this.limit = parseInt(this.$route.query.size);
 				}
 
-				let select = `limit=${this.limit}&pageNumber=${this.pageNum}`;
+				let select = `limit=${this.limit}&pageNumber=${this.pageNumScroll}`;
 
 				if (this.hid == 3) {
 					select += "&photos=1";
@@ -339,8 +334,14 @@
 		watch: {
 			$route: function (value) {
 				this.articles = [];
-				this.pageNum = 1;
 				this.fixedTitle = "";
+
+				this.pageNum = this.$route.query.page
+					? parseInt(this.$route.query.page)
+					: 1;
+
+				this.pageNumScroll = this.pageNum;
+
 				this.$fetch();
 			},
 		},
