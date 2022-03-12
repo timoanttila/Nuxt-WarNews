@@ -140,8 +140,8 @@
 			:aria-busy="ariaBusy"
 			:aria-label="
 				lang == 'fi'
-					? 'Uusimmat sotiin liittyvät uutislinkit'
-					: 'Current war-related news links'
+					? `Uusimmat sotiin liittyvät uutislinkit. Sivu ${pageNum}.`
+					: `Current war-related news links. Page ${pageNum}.`
 			"
 			role="feed"
 		>
