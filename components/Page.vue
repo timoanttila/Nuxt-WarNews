@@ -295,8 +295,10 @@
 			async fixQueries() {
 				let query = "";
 
-				query += !query ? "?" : "&";
-				query += `pageNum=${this.pageNumScroll}`;
+				if (this.pageNumScroll > 1) {
+					query += !query ? "?" : "&";
+					query += `pageNum=${this.pageNumScroll}`;
+				}
 
 				if (this.$route.query.size) {
 					this.limit = parseInt(this.$route.query.size);
