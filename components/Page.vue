@@ -146,7 +146,7 @@
 			role="feed"
 		>
 			<template v-if="Array.isArray(articles) && articles[0]">
-				<div
+				<article
 					v-for="(article, i) of articles"
 					:key="article.id"
 					v-observe-visibility="
@@ -159,7 +159,6 @@
 					:aria-labelledby="`article-title-${article.id}`"
 					:aria-describedby="`article-description-${article.id} article-publisher-${article.id}`"
 					tabindex="0"
-					role="article"
 				>
 					<a
 						:id="`article-link-${article.id}`"
@@ -202,7 +201,7 @@
 							</time>
 						</small>
 					</div>
-				</div>
+				</article>
 			</template>
 		</div>
 	</div>
