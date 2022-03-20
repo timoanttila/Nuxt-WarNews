@@ -33,7 +33,7 @@
 			<div v-if="!service" id="pageControls" class="mx-auto grid">
 				<div class="pageLinkContent">
 					<nuxt-link
-						v-if="pageLinks.previousPage"
+						v-if="pageLinks.previousPage && pageNum - 1 > 0"
 						id="pageLinkLeft"
 						class="pageLinks grid no-underline w-48 h-48"
 						:to="{
@@ -129,7 +129,7 @@
 					{{ pageLinks.totalCount }}
 					{{ lang == "fi" ? "artikkelia" : "articles" }}
 					<template v-if="!service">
-						- {{ pageNum }} / {{ pageLinks.totalPages }}
+						- {{ pageNum }} / {{ pageLinks.totalPages }} pages
 					</template>
 				</small>
 			</div>
@@ -146,7 +146,7 @@
 			role="feed"
 		>
 			<template v-if="Array.isArray(articles) && articles[0]">
-				<article
+				<div
 					v-for="(article, i) of articles"
 					:key="article.id"
 					v-observe-visibility="
@@ -159,6 +159,7 @@
 					:aria-labelledby="`article-title-${article.id}`"
 					:aria-describedby="`article-description-${article.id} article-publisher-${article.id}`"
 					tabindex="0"
+					role="article"
 				>
 					<a
 						:id="`article-link-${article.id}`"
@@ -194,7 +195,6 @@
 							</nuxt-link>
 
 							<time
-								pubdate
 								:datetime="article.created.datetime"
 								:title="article.created.title"
 							>
@@ -202,7 +202,7 @@
 							</time>
 						</small>
 					</div>
-				</article>
+				</div>
 			</template>
 		</div>
 	</div>
@@ -238,7 +238,7 @@
 				articles: [],
 				pageNum: 1,
 				pageNumScroll: 1,
-				limit: 50,
+				limit: 30,
 				search: "",
 				fixedTitle: "",
 				ariaBusy: "false",
